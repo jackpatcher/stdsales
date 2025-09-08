@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบันทึกการขายนักเรียน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Kanit', sans-serif; }
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <div class="bg-white shadow-lg border-b-4 border-blue-500">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <h1 class="text-3xl font-bold text-gray-800 text-center">📊 ระบบบันทึกการขายนักเรียน</h1>
+            <p class="text-center text-gray-600 mt-2">ติดตามผลการขายและวิเคราะห์ประสิทธิภาพแต่ละกลุ่ม</p>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="max-w-7xl mx-auto px-6 mt-6">
+        <div class="flex bg-white rounded-lg shadow-md p-1">
+            <button id="dataTab" class="flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 bg-blue-500 text-white">
+                📝 บันทึกข้อมูล
+            </button>
+            <button id="chartTab" class="flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100">
+                📈 แสดงผลกราฟ
+            </button>
+        </div>
+    </div>
+
+    <!-- Data Entry Tab -->
+    <div id="dataContent" class="max-w-7xl mx-auto px-6 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+            <!-- Groups 1-8 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🔴 กลุ่มที่ 1
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="1"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="1">
+                </div>
+            </div>
+
+            <!-- Repeat for groups 2-8 with different colors -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🟠 กลุ่มที่ 2
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="2"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="2">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🟡 กลุ่มที่ 3
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="3"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="3">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🟢 กลุ่มที่ 4
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="4"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="4">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🔵 กลุ่มที่ 5
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="5"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="5">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🟣 กลุ่มที่ 6
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="6"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="6">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🟪 กลุ่มที่ 7
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="7"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="7">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-pink-400">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    🩷 กลุ่มที่ 8
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 1</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8" data-round="1" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8" data-round="1" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 2</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8" data-round="2" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8" data-round="2" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ครั้งที่ 3</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="ยอดขาย" class="sales-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8" data-round="3" data-type="sales">
+                            <input type="number" placeholder="ทุน" class="cost-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8" data-round="3" data-type="cost">
+                        </div>
+                        <div class="profit-display mt-2 text-sm font-medium text-green-600"></div>
+                    </div>
+                    <textarea placeholder="สิ่งที่ควรปรับปรุง..." class="improvement-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" data-group="8"></textarea>
+                    <input type="url" placeholder="ลิงค์เอกสารประกอบ" class="document-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" data-group="8">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Tab -->
+    <div id="chartContent" class="max-w-7xl mx-auto px-6 mt-6 hidden">
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-r from-green-400 to-green-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm font-medium">ยอดขายรวม</p>
+                        <p id="totalSales" class="text-3xl font-bold">0 บาท</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-3">
+                        <span class="text-2xl">💰</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium">กำไรรวม</p>
+                        <p id="totalProfit" class="text-3xl font-bold">0 บาท</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-3">
+                        <span class="text-2xl">📈</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-purple-400 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm font-medium">กลุ่มที่ขายดีสุด</p>
+                        <p id="bestGroup" class="text-3xl font-bold">-</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-3">
+                        <span class="text-2xl">🏆</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">📊 ยอดขายแต่ละครั้ง</h3>
+                <canvas id="salesChart" width="400" height="300"></canvas>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">💹 เปอร์เซ็นต์กำไรแต่ละกลุ่ม</h3>
+                <canvas id="profitChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Analysis -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">🔍 การวิเคราะห์</h3>
+            <div id="analysis" class="text-gray-700 leading-relaxed">
+                <p>กรุณากรอกข้อมูลการขายเพื่อดูการวิเคราะห์</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Data storage
+        let salesData = {};
+        let charts = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            loadData();
+        });
+
+        function initializeEventListeners() {
+            // Tab switching
+            document.getElementById('dataTab').addEventListener('click', () => switchTab('data'));
+            document.getElementById('chartTab').addEventListener('click', () => switchTab('chart'));
+
+            // Input listeners
+            document.querySelectorAll('.sales-input, .cost-input').forEach(input => {
+                input.addEventListener('input', handleInputChange);
+            });
+
+            document.querySelectorAll('.improvement-input, .document-input').forEach(input => {
+                input.addEventListener('input', saveData);
+            });
+        }
+
+        function switchTab(tab) {
+            const dataTab = document.getElementById('dataTab');
+            const chartTab = document.getElementById('chartTab');
+            const dataContent = document.getElementById('dataContent');
+            const chartContent = document.getElementById('chartContent');
+
+            if (tab === 'data') {
+                dataTab.className = 'flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 bg-blue-500 text-white';
+                chartTab.className = 'flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100';
+                dataContent.classList.remove('hidden');
+                chartContent.classList.add('hidden');
+            } else {
+                chartTab.className = 'flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 bg-blue-500 text-white';
+                dataTab.className = 'flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100';
+                dataContent.classList.add('hidden');
+                chartContent.classList.remove('hidden');
+                updateCharts();
+            }
+        }
+
+        function handleInputChange(event) {
+            const input = event.target;
+            const group = input.dataset.group;
+            const round = input.dataset.round;
+            const type = input.dataset.type;
+
+            if (!salesData[group]) salesData[group] = {};
+            if (!salesData[group][round]) salesData[group][round] = {};
+
+            salesData[group][round][type] = parseFloat(input.value) || 0;
+
+            // Calculate and display profit
+            updateProfitDisplay(group, round);
+            saveData();
+            showToast('บันทึกข้อมูลแล้ว', 'success');
+        }
+
+        function updateProfitDisplay(group, round) {
+            const data = salesData[group] && salesData[group][round];
+            if (!data) return;
+
+            const sales = data.sales || 0;
+            const cost = data.cost || 0;
+            const profit = sales - cost;
+            const profitPercent = cost > 0 ? ((profit / cost) * 100).toFixed(1) : 0;
+
+            const profitDisplay = document.querySelector(`[data-group="${group}"][data-round="${round}"]`).closest('div').querySelector('.profit-display');
+            
+            if (sales > 0 && cost > 0) {
+                profitDisplay.innerHTML = `กำไร: ${profit.toLocaleString()} บาท (${profitPercent}%)`;
+                profitDisplay.className = `profit-display mt-2 text-sm font-medium ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            } else {
+                profitDisplay.innerHTML = '';
+            }
+        }
+
+        function updateCharts() {
+            updateSummaryCards();
+            updateSalesChart();
+            updateProfitChart();
+            updateAnalysis();
+        }
+
+        function updateSummaryCards() {
+            let totalSales = 0;
+            let totalCost = 0;
+            let bestGroup = '';
+            let bestSales = 0;
+
+            for (let group = 1; group <= 8; group++) {
+                let groupSales = 0;
+                for (let round = 1; round <= 3; round++) {
+                    const data = salesData[group] && salesData[group][round];
+                    if (data) {
+                        totalSales += data.sales || 0;
+                        totalCost += data.cost || 0;
+                        groupSales += data.sales || 0;
+                    }
+                }
+                if (groupSales > bestSales) {
+                    bestSales = groupSales;
+                    bestGroup = `กลุ่ม ${group}`;
+                }
+            }
+
+            document.getElementById('totalSales').textContent = totalSales.toLocaleString() + ' บาท';
+            document.getElementById('totalProfit').textContent = (totalSales - totalCost).toLocaleString() + ' บาท';
+            document.getElementById('bestGroup').textContent = bestGroup || '-';
+        }
+
+        function updateSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            if (charts.sales) {
+                charts.sales.destroy();
+            }
+
+            const datasets = [];
+            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
+
+            for (let group = 1; group <= 8; group++) {
+                const data = [];
+                for (let round = 1; round <= 3; round++) {
+                    const roundData = salesData[group] && salesData[group][round];
+                    data.push(roundData ? (roundData.sales || 0) : 0);
+                }
+                
+                datasets.push({
+                    label: `กลุ่ม ${group}`,
+                    data: data,
+                    borderColor: colors[group - 1],
+                    backgroundColor: colors[group - 1] + '20',
+                    tension: 0.4
+                });
+            }
+
+            charts.sales = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['ครั้งที่ 1', 'ครั้งที่ 2', 'ครั้งที่ 3'],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' บาท';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateProfitChart() {
+            const ctx = document.getElementById('profitChart').getContext('2d');
+            
+            if (charts.profit) {
+                charts.profit.destroy();
+            }
+
+            const data = [];
+            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
+
+            for (let group = 1; group <= 8; group++) {
+                let totalSales = 0;
+                let totalCost = 0;
+                
+                for (let round = 1; round <= 3; round++) {
+                    const roundData = salesData[group] && salesData[group][round];
+                    if (roundData) {
+                        totalSales += roundData.sales || 0;
+                        totalCost += roundData.cost || 0;
+                    }
+                }
+                
+                const profitPercent = totalCost > 0 ? ((totalSales - totalCost) / totalCost * 100) : 0;
+                data.push(profitPercent);
+            }
+
+            charts.profit = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 8}, (_, i) => `กลุ่ม ${i + 1}`),
+                    datasets: [{
+                        label: 'เปอร์เซ็นต์กำไร',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateAnalysis() {
+            const analysisDiv = document.getElementById('analysis');
+            let analysis = '<div class="space-y-4">';
+
+            // Find best and worst performing groups
+            let groupPerformance = [];
+            for (let group = 1; group <= 8; group++) {
+                let totalSales = 0;
+                let totalCost = 0;
+                let rounds = 0;
+
+                for (let round = 1; round <= 3; round++) {
+                    const data = salesData[group] && salesData[group][round];
+                    if (data && data.sales > 0) {
+                        totalSales += data.sales;
+                        totalCost += data.cost || 0;
+                        rounds++;
+                    }
+                }
+
+                if (rounds > 0) {
+                    const profitPercent = totalCost > 0 ? ((totalSales - totalCost) / totalCost * 100) : 0;
+                    groupPerformance.push({
+                        group: group,
+                        sales: totalSales,
+                        profit: totalSales - totalCost,
+                        profitPercent: profitPercent,
+                        rounds: rounds
+                    });
+                }
+            }
+
+            if (groupPerformance.length === 0) {
+                analysis += '<p>กรุณากรอกข้อมูลการขายเพื่อดูการวิเคราะห์</p>';
+            } else {
+                groupPerformance.sort((a, b) => b.sales - a.sales);
+                
+                analysis += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded">`;
+                analysis += `<h4 class="font-semibold text-green-800 mb-2">🏆 กลุ่มที่มีผลงานดีที่สุด</h4>`;
+                analysis += `<p class="text-green-700">กลุ่ม ${groupPerformance[0].group} มียอดขายสูงสุด ${groupPerformance[0].sales.toLocaleString()} บาท `;
+                analysis += `กำไร ${groupPerformance[0].profit.toLocaleString()} บาท (${groupPerformance[0].profitPercent.toFixed(1)}%)</p>`;
+                analysis += `</div>`;
+
+                if (groupPerformance.length > 1) {
+                    const worst = groupPerformance[groupPerformance.length - 1];
+                    analysis += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">`;
+                    analysis += `<h4 class="font-semibold text-yellow-800 mb-2">📈 กลุ่มที่ควรปรับปรุง</h4>`;
+                    analysis += `<p class="text-yellow-700">กลุ่ม ${worst.group} มียอดขายต่ำสุด ${worst.sales.toLocaleString()} บาท `;
+                    analysis += `ควรหาวิธีเพิ่มยอดขายและลดต้นทุน</p>`;
+                    analysis += `</div>`;
+                }
+
+                // Average performance
+                const avgSales = groupPerformance.reduce((sum, g) => sum + g.sales, 0) / groupPerformance.length;
+                const avgProfit = groupPerformance.reduce((sum, g) => sum + g.profitPercent, 0) / groupPerformance.length;
+                
+                analysis += `<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">`;
+                analysis += `<h4 class="font-semibold text-blue-800 mb-2">📊 ภาพรวม</h4>`;
+                analysis += `<p class="text-blue-700">ยอดขายเฉลี่ย ${avgSales.toLocaleString()} บาท กำไรเฉลี่ย ${avgProfit.toFixed(1)}%</p>`;
+                analysis += `<p class="text-blue-700">มี ${groupPerformance.length} กลุ่มที่มีข้อมูลการขาย</p>`;
+                analysis += `</div>`;
+            }
+
+            analysis += '</div>';
+            analysisDiv.innerHTML = analysis;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            
+            toast.className = `toast ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2`;
+            toast.innerHTML = `
+                <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span>${message}</span>
+            `;
+
+            document.getElementById('toastContainer').appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function saveData() {
+            // Get all improvement and document inputs
+            document.querySelectorAll('.improvement-input').forEach(input => {
+                const group = input.dataset.group;
+                if (!salesData[group]) salesData[group] = {};
+                salesData[group].improvement = input.value;
+            });
+
+            document.querySelectorAll('.document-input').forEach(input => {
+                const group = input.dataset.group;
+                if (!salesData[group]) salesData[group] = {};
+                salesData[group].document = input.value;
+            });
+
+            localStorage.setItem('salesData', JSON.stringify(salesData));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('salesData');
+            if (saved) {
+                salesData = JSON.parse(saved);
+                
+                // Restore input values
+                for (let group = 1; group <= 8; group++) {
+                    if (salesData[group]) {
+                        for (let round = 1; round <= 3; round++) {
+                            if (salesData[group][round]) {
+                                const salesInput = document.querySelector(`[data-group="${group}"][data-round="${round}"][data-type="sales"]`);
+                                const costInput = document.querySelector(`[data-group="${group}"][data-round="${round}"][data-type="cost"]`);
+                                
+                                if (salesInput && salesData[group][round].sales) {
+                                    salesInput.value = salesData[group][round].sales;
+                                }
+                                if (costInput && salesData[group][round].cost) {
+                                    costInput.value = salesData[group][round].cost;
+                                }
+                                
+                                updateProfitDisplay(group, round);
+                            }
+                        }
+                        
+                        // Restore improvement and document inputs
+                        const improvementInput = document.querySelector(`[data-group="${group}"].improvement-input`);
+                        const documentInput = document.querySelector(`[data-group="${group}"].document-input`);
+                        
+                        if (improvementInput && salesData[group].improvement) {
+                            improvementInput.value = salesData[group].improvement;
+                        }
+                        if (documentInput && salesData[group].document) {
+                            documentInput.value = salesData[group].document;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bf10e1d26a893b',t:'MTc1NzM0MTAxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
