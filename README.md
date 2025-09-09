@@ -1,4 +1,4 @@
 # stdsales
 git add .
-git commit -m "editable"
+git commit -m "copy link"
 git push origin main
